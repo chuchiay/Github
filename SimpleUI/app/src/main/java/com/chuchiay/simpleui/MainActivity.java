@@ -2,15 +2,38 @@ package com.chuchiay.simpleui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    private EditText inputText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        inputText = (EditText)findViewById(R.id.inputText);
+        inputText.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent){
+
+                if(keyEvent.getAction() == KeyEvent.ACTION_DOWN){
+                    if(keyCode == KeyEvent.KEYCODE_ENTER){
+                        submit(view);
+                        return true;
+                    }
+
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
@@ -33,5 +56,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void submit(View view){
+        String text = inputText.getText().toString();
+        Toast.makeText(this,text,Toast.LENGTH_SHORT).show();
+        inputText.setText("");
     }
 }

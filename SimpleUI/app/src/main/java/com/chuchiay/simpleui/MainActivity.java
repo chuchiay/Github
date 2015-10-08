@@ -6,12 +6,14 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText inputText;
+    private CheckBox hide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        hide = (CheckBox) findViewById(R.id.hideCheckbox);
+        hide.setChecked(true);
     }
 
     @Override

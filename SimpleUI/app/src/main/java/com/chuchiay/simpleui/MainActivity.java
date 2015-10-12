@@ -1,5 +1,7 @@
 package com.chuchiay.simpleui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -14,16 +16,27 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText inputText;
     private CheckBox hide;
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
+        editor = sp.edit();
+
+
         inputText = (EditText)findViewById(R.id.inputText);
         inputText.setOnKeyListener(new View.OnKeyListener(){
             @Override
             public boolean onKey(View view, int keyCode, KeyEvent keyEvent){
+
+                String text = inputText.getText().toString();
+                editor.putString("inputText", text);
+                editor.commit();
 
                 if(keyEvent.getAction() == KeyEvent.ACTION_DOWN){
                     if(keyCode == KeyEvent.KEYCODE_ENTER){
@@ -36,9 +49,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
+        inputText.setText(sp.getString("inputText",""));
         hide = (CheckBox) findViewById(R.id.hideCheckbox);
-        hide.setChecked(true);
     }
 
     @Override
@@ -65,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void submit(View view){
         String text = inputText.getText().toString();
+
+        if(hide.isChecked()){
+            inputText.setText("********");
+        }
         Toast.makeText(this,text,Toast.LENGTH_SHORT).show();
         inputText.setText("");
     }

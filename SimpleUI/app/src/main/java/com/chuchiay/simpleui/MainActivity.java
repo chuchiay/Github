@@ -8,8 +8,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
 
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,16 +34,16 @@ public class MainActivity extends AppCompatActivity {
 
 
         inputText = (EditText)findViewById(R.id.inputText);
-        inputText.setOnKeyListener(new View.OnKeyListener(){
+        inputText.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public boolean onKey(View view, int keyCode, KeyEvent keyEvent){
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
 
                 String text = inputText.getText().toString();
                 editor.putString("inputText", text);
                 editor.commit();
 
-                if(keyEvent.getAction() == KeyEvent.ACTION_DOWN){
-                    if(keyCode == KeyEvent.KEYCODE_ENTER){
+                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
                         submit(view);
                         return true;
                     }
@@ -49,8 +53,28 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        inputText.setText(sp.getString("inputText",""));
+
         hide = (CheckBox) findViewById(R.id.hideCheckbox);
+        hide.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor.putBoolean("hideCheckBox", isChecked);
+                editor.commit();
+            }
+        });
+        inputText.setText(sp.getString("inputText", ""));
+        hide.setChecked(sp.getBoolean("hideCheckBox",false));
+
+        listView = (ListView) findViewById(R.id.testListView);
+        setList();
+    }
+
+    private void setList(){
+        String [] data = new String[]{"1","2","3","4"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,data);
+
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -81,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
         if(hide.isChecked()){
             inputText.setText("********");
         }
+
+        Utils.writeFile(this,"test.txt",text + "\n");
+        text = Utils.readFile(this,"test.txt");
         Toast.makeText(this,text,Toast.LENGTH_SHORT).show();
         inputText.setText("");
     }

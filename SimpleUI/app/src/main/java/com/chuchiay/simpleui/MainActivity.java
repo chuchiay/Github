@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
 
     private ListView listView;
+    private Spinner storeInfoSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,18 +65,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         inputText.setText(sp.getString("inputText", ""));
-        hide.setChecked(sp.getBoolean("hideCheckBox",false));
+        hide.setChecked(sp.getBoolean("hideCheckBox", false));
 
         listView = (ListView) findViewById(R.id.testListView);
+        storeInfoSpinner = (Spinner) findViewById(R.id.storeInfoSpinner);
+
         setList();
+        setStoreInfo();
     }
-
+    private void setStoreInfo(){
+        String[] data = getResources().getStringArray(R.array.storeInfo);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,data);
+        storeInfoSpinner.setAdapter(adapter);
+    }
     private void setList(){
-        String [] data = new String[]{"1","2","3","4"};
+        if(Utils.readFile(this,"test.txt") != null) {
+            String[] data = Utils.readFile(this, "test.txt").split("\n");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,data);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,data);
 
-        listView.setAdapter(adapter);
+            listView.setAdapter(adapter);
+        }
+
+
     }
 
     @Override
@@ -110,5 +123,6 @@ public class MainActivity extends AppCompatActivity {
         text = Utils.readFile(this,"test.txt");
         Toast.makeText(this,text,Toast.LENGTH_SHORT).show();
         inputText.setText("");
+        setList();
     }
 }
